@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Hero from '@/components/Hero';
 import SearchBar from '@/components/SearchBar';
@@ -5,16 +6,25 @@ import RouteCard from '@/components/RouteCard';
 import MapView from '@/components/MapView';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
+import { fetchRoutes, Route } from '@/lib/api';
 
 const Index = () => {
-  const routes = [
-    { number: '1', name: 'Центр — Жовтневый', stops: 25, duration: '45 мин', type: 'regular' as const },
-    { number: '5', name: 'Вокзал — Острая Могила', stops: 18, duration: '35 мин', type: 'express' as const },
-    { number: '12', name: 'ЦУМ — Артёмовский', stops: 22, duration: '40 мин', type: 'regular' as const },
-    { number: '23', name: 'Центр — Южный', stops: 16, duration: '30 мин', type: 'express' as const },
-    { number: '34', name: 'Площадь Героев — Каменный Брод', stops: 28, duration: '50 мин', type: 'regular' as const },
-    { number: '45', name: 'Вокзал — Металлист', stops: 20, duration: '38 мин', type: 'regular' as const },
-  ];
+  const [routes, setRoutes] = useState<Route[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadRoutes() {
+      try {
+        const data = await fetchRoutes();
+        setRoutes(data);
+      } catch (error) {
+        console.error('Failed to load routes:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadRoutes();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,11 +56,24 @@ const Index = () => {
                 <p className="text-muted-foreground">Выберите нужный автобус для просмотра деталей</p>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {routes.map(route => (
-                  <RouteCard key={route.number} {...route} />
-                ))}
-              </div>
+              {loading ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Загрузка маршрутов...</p>
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {routes.map(route => (
+                    <RouteCard 
+                      key={route.number} 
+                      number={route.number}
+                      name={route.name}
+                      stops={route.stops || 0}
+                      duration={route.duration || 'N/A'}
+                      type={route.type as 'express' | 'regular'}
+                    />
+                  ))}
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="map" className="space-y-8">

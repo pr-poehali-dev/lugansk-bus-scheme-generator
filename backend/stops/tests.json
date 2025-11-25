@@ -1,0 +1,16 @@
+{
+  "tests": [
+    {
+      "name": "Create new stop",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "route_id": 1,
+        "name": "Тестовая остановка",
+        "time": "10 мин",
+        "position": 99
+      },
+      "expectedStatus": 201
+    }
+  ]
+}

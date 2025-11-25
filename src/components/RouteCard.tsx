@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
+import { useNavigate } from 'react-router-dom';
 
 interface RouteCardProps {
   number: string;
@@ -12,8 +13,13 @@ interface RouteCardProps {
 }
 
 export default function RouteCard({ number, name, stops, duration, type }: RouteCardProps) {
+  const navigate = useNavigate();
+
   return (
-    <Card className="hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer">
+    <Card 
+      className="hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer"
+      onClick={() => navigate(`/route/${number}`)}
+    >
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
